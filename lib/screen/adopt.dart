@@ -16,8 +16,8 @@ class _AdoptState extends State<Adopt> {
   List<Adopts> ADs = [];
 
   Future<String> fetchData() async {
-    final response = await http
-      .get(Uri.parse("https://ubaya.me/flutter/160421074/listadopt.php"));
+    final response = await http.get(
+        Uri.parse("https://ubaya.me/flutter/160421074/adopsian/listadopt.php"));
     if (response.statusCode == 200) {
       return response.body;
     } else {
@@ -33,9 +33,7 @@ class _AdoptState extends State<Adopt> {
         Adopts ad = Adopts.fromJson(adopt);
         ADs.add(ad);
       }
-      setState(() {
-
-      });
+      setState(() {});
     });
   }
 
@@ -48,37 +46,36 @@ class _AdoptState extends State<Adopt> {
   Widget DaftarAdopsi(adopts) {
     if (adopts != null) {
       return ListView.builder(
-        itemCount: adopts.length,
-        itemBuilder: (BuildContext ctxt, int index) {
-          return new Card(
-            child: Column(
+          itemCount: adopts.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return new Card(
+                child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  leading: Image.network(adopts[index].image, width: 30, height: 30),
-                  title: Text(adopts[index].name + " (" + adopts[index].type + ")"),
-                  subtitle: Text("Description: " + adopts[index].description)
-                ),
+                    leading: Image.network(adopts[index].image,
+                        width: 30, height: 30),
+                    title: Text(
+                        adopts[index].name + " (" + adopts[index].type + ")"),
+                    subtitle:
+                        Text("Description: " + adopts[index].description)),
               ],
             ));
-
-        });
+          });
     } else {
       return CircularProgressIndicator();
     }
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('List of Adopt') ),
+        appBar: AppBar(title: const Text('List of Adopt')),
         body: ListView(children: <Widget>[
           Container(
-            height: MediaQuery.of(context).size.height-200,
+            height: MediaQuery.of(context).size.height - 200,
             child: DaftarAdopsi(ADs),
           )
-      ]));
+        ]));
   }
 }

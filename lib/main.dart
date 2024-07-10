@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:myproject/screen/adopt.dart';
 import 'package:myproject/screen/browse.dart';
 import 'package:myproject/screen/login.dart';
+import 'package:myproject/screen/newoffer.dart';
 import 'package:myproject/screen/offer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-String active_user = "";
+int active_user = -1;
 String _user_name = "Paulus Kurnianto";
 
-Future<String> checkUser() async {
+Future<int> checkUser() async {
   final prefs = await SharedPreferences.getInstance();
-  String userId = prefs.getString("user_id") ?? '';
+  int userId = prefs.getInt("user_id") ?? -1;
   _user_name = prefs.getString("user_name") ?? '';
   return userId;
 }
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  checkUser().then((String result) {
-    if (result == '') {
+  checkUser().then((int result) {
+    if (result == -1) {
       runApp(const MyLogin());
     } else {
       active_user = result;
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'adopt': (context) => Adopt(),
         'browse': (context) => Browse(),
-        'offer': (context) => Offer(),
+        'offer': (context) => const Offer(),
+        'new_offer': (context) => const NewOffer(),
       },
       home: const MyHomePage(title: 'Adopsian'),
     );
@@ -58,7 +60,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _user_id = "";
+  int _user_id = -1;
 
   @override
   void initState() {
@@ -72,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void goBrowse() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString("user_id", _user_id);
+    prefs.setInt("user_id", _user_id);
     main();
   }
 
@@ -89,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           UserAccountsDrawerHeader(
               accountName: Text(_user_name),
-              accountEmail: Text(_user_id),
+              accountEmail: const Text(""),
               currentAccountPicture: const CircleAvatar(
                   backgroundImage: NetworkImage("https://i.pravatar.cc/800"))),
           // ListTile(
@@ -138,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.green[100],
               child: InkWell(
                 onTap: () {
-                  Navigator.popAndPushNamed(context, "adopt");
+                  Navigator.pushNamed(context, "adopt");
                 },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -160,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.red[100],
               child: InkWell(
                 onTap: () {
-                  Navigator.popAndPushNamed(context, "offer");
+                  Navigator.pushNamed(context, "offer");
                 },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.blue[100],
               child: InkWell(
                 onTap: () {
-                  Navigator.popAndPushNamed(context, "browse");
+                  Navigator.pushNamed(context, "browse");
                 },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
