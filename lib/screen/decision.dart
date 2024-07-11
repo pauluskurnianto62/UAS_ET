@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/class/adopts.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Decision extends StatefulWidget {
   Adopts? adopt;
@@ -54,8 +56,27 @@ class _DecisionState extends State<Decision> {
                           child: Text(user.name),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
-                          child: const Text("Adopsi"),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            final response = await http.post(
+                              Uri.parse(
+                                  "https://ubaya.me/flutter/160421074/adopsian/addadoptuser.php"),
+                              body: {
+                                'id': widget.adopt!.id.toString(),
+                                'status': 'adopted',
+                                'selectAdoptID': user.userId.toString(),
+                              },
+                            );
+                            if (response.statusCode == 200) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Sukses Adopsikan Hewan')));
+                              Navigator.pop(context);
+                            } else {
+                              throw Exception('Failed to read API');
+                            }
+                          },
+                          child: const Text("Adopsikan"),
                         ),
                       ],
                     ),

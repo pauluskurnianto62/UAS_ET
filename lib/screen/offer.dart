@@ -201,31 +201,32 @@ class _AdoptState extends State<Offer> {
                                     fontWeight: FontWeight.bold)),
                           ],
                         ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red[100],
-                          ),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        Decision(adopt: ADs[i]),
-                                  ),
-                                )
-                                .then((value) => bacaData());
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.question_mark),
-                              SizedBox(width: 8),
-                              Text('Choose Adopter'),
-                            ],
+                      if (ADs[i].selectedUserName == "")
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[100],
+                            ),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          Decision(adopt: ADs[i]),
+                                    ),
+                                  )
+                                  .then((value) => bacaData());
+                            },
+                            child: const Row(
+                              children: [
+                                Icon(Icons.question_mark),
+                                SizedBox(width: 8),
+                                Text('Choose Adopter'),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                       ListTile(
                         title: Text(ADs[i].descriptions),
                       ),

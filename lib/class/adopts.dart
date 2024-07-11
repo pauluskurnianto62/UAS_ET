@@ -26,21 +26,27 @@ class Adopts {
   });
 
   factory Adopts.fromJson(Map<String, dynamic> json) {
-    var userlistFromJson = json['userlist'] as List;
-    List<UserList> userlistParsed =
-        userlistFromJson.map((user) => UserList.fromJson(user)).toList();
+    var userlistFromJson = json['userlist'];
+    List<UserList> userlistParsed = [];
+
+    if (userlistFromJson != null) {
+      // If `userlist` is not null, parse it into a list of `UserList` objects
+      userlistParsed = (userlistFromJson as List)
+          .map((user) => UserList.fromJson(user))
+          .toList();
+    }
 
     return Adopts(
       id: json['id'] ?? 0,
       ids: json['id'] ?? 0,
-      names: json['name'] as String,
-      types: json['type'] as String,
-      descriptions: json['description'] as String,
-      images: json['image'] as String,
-      status: json['status'] as String,
+      names: json['name'] as String? ?? "",
+      types: json['type'] as String? ?? "",
+      descriptions: json['description'] as String? ?? "",
+      images: json['image'] as String? ?? "",
+      status: json['status'] as String? ?? "",
       userCount: json['user_count'] ?? 0,
-      selectedUserName: json['selected_user_name'] ?? "",
-      ownerName: json['owner_name'] ?? "",
+      selectedUserName: json['selected_user_name'] as String? ?? "",
+      ownerName: json['owner_name'] as String? ?? "",
       userlist: userlistParsed,
     );
   }
