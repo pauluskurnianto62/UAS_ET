@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/main.dart';
+import 'package:myproject/screen/regist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:convert';
@@ -11,7 +12,7 @@ class MyLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Adopsian',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -129,7 +130,7 @@ class _LoginState extends State<Login> {
                               borderRadius: BorderRadius.circular(20)),
                           child: ElevatedButton(
                             onPressed: () {
-                              doRegister();
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Regist()));
                             },
                             child: const Text(
                               'Register',

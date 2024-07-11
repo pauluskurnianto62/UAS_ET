@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:myproject/screen/login.dart';
 
 class MyRegist extends StatelessWidget {
   @override
@@ -24,16 +25,14 @@ class Regist extends StatefulWidget {
 }
 
 class _RegistState extends State<Regist> {
-  String user_id = "";
   String user_name = "";
   String user_password = "";
 
   void submit() async {
     final response = await http.post(
         Uri.parse(
-            "https://ubaya.me/flutter/160421074/adopsian/adopsian/regist.php"),
+            "https://ubaya.me/flutter/160421074/adopsian/regist.php"),
         body: {
-          'user_id': user_id,
           'user_name': user_name,
           'user_password': user_password,
         });
@@ -42,11 +41,11 @@ class _RegistState extends State<Regist> {
       if (json['result'] == 'success') {
         if (!mounted) return;
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+            .showSnackBar(const SnackBar(content: Text('Sukses Menambah Data')));
       }
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error')));
+          .showSnackBar(const SnackBar(content: Text('Error')));
       throw Exception('Failed to read API');
     }
   }
@@ -69,18 +68,6 @@ class _RegistState extends State<Regist> {
             child: Column(children: [
               Padding(
                 padding: EdgeInsets.all(10),
-                child: TextField(
-                  onChanged: (v) {
-                    user_id = v;
-                  },
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'User ID',
-                      hintText: 'Enter valid user id'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(10),
                 //padding: EdgeInsets.symmetric(horizontal: 15),
                 child: TextField(
                   onChanged: (v) {
@@ -88,7 +75,7 @@ class _RegistState extends State<Regist> {
                   },
                   decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Username',
+                      labelText: 'New Username',
                       hintText: 'Enter valid username'),
                 ),
               ),
@@ -102,7 +89,7 @@ class _RegistState extends State<Regist> {
                   obscureText: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Password',
+                      labelText: 'New Password',
                       hintText: 'Enter secure password'),
                 ),
               ),
@@ -111,36 +98,31 @@ class _RegistState extends State<Regist> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        height: 50,
-                        width: 250,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            submit();
-                          },
-                          child: Text(
-                            'Submit',
-                            style: TextStyle(color: Colors.black, fontSize: 25),
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (user_name.isEmpty || user_password.isEmpty || user_name == "" || user_password == ""){
+                                ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(content: Text('Data tidak boleh kosong')));
+                              }
+                              else {
+                                submit();
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
+                              }
+                            },
+                            child: const Text(
+                              'Submit',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 25),
+                            ),
                           ),
                         ),
                       ),
-                      Container(
-                        height: 50,
-                        width: 250,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Back',
-                            style: TextStyle(color: Colors.black, fontSize: 25),
-                          ),
-                        ),
-                      )
                     ]),
               )
             ])));
