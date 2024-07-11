@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:myproject/class/adopts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditOffer extends StatefulWidget {
-  int adoptID;
-  EditOffer({super.key, required this.adoptID});
+  Adopts? adopt;
+  EditOffer({super.key, required this.adopt});
 
   @override
   State<EditOffer> createState() => EditOfferState();
@@ -15,64 +16,58 @@ class EditOffer extends StatefulWidget {
 
 class EditOfferState extends State<EditOffer> {
   final _formKey = GlobalKey<FormState>();
-  Adopts ad =
-      new Adopts(ids: 1, names: "", types: "", descriptions: "", images: "");
-  TextEditingController _titleCont = TextEditingController();
-  TextEditingController _typeCont = TextEditingController();
-  TextEditingController _descCont = TextEditingController();
-  TextEditingController _imageCont = TextEditingController();
-
-  Future<String> fetchData() async {
-    final response = await http.post(
-        Uri.parse(
-            "https://ubaya.me/flutter/160421074/adopsian/listofferadopt.php"),
-        body: {'id': widget.adoptID.toString()});
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      throw Exception('Failed to read API');
-    }
-  }
-
-  bacaData() {
-    fetchData().then((value) {
-      Map json = jsonDecode(value);
-      ad = Adopts.fromJson(json['data']);
-      setState(() {
-        _titleCont.text = ad.names;
-        _typeCont.text = ad.types;
-        _descCont.text = ad.descriptions;
-        _imageCont.text = ad.images;
-      });
-    });
-  }
+  final TextEditingController _titleCont = TextEditingController();
+  final TextEditingController _typeCont = TextEditingController();
+  final TextEditingController _descCont = TextEditingController();
+  final TextEditingController _imageCont = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    bacaData();
+    if (widget.adopt != null) {
+      print('adopt is not null');
+      _titleCont.text = widget.adopt!.names;
+      _typeCont.text = widget.adopt!.types;
+      _descCont.text = widget.adopt!.descriptions;
+      _imageCont.text = widget.adopt!.images;
+
+      if (_titleCont.text.isNotEmpty &&
+          _typeCont.text.isNotEmpty &&
+          _descCont.text.isNotEmpty &&
+          _imageCont.text.isNotEmpty) {
+        print('Text fields updated');
+      } else {
+        print('Text fields not updated');
+      }
+    } else {
+      print('adopt is null');
+    }
   }
 
   void submit() async {
     final response = await http.post(
-        Uri.parse(
-            "https://ubaya.me/flutter/160421074/adopsian/editofferadopt.php"),
-        body: {
-          'name': ad.names,
-          'type': ad.types,
-          'description': ad.descriptions,
-          'image': ad.images,
-        });
+      Uri.parse(
+          "https://ubaya.me/flutter/160421074/adopsian/editofferadopt.php"),
+      body: {
+        'id': widget.adopt!.id.toString(),
+        'name': widget.adopt!.names,
+        'type': widget.adopt!.types,
+        'description': widget.adopt!.descriptions,
+        'image': widget.adopt!.images,
+      },
+    );
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
+      print(json);
       if (json['result'] == 'success') {
         if (!mounted) return;
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+            .showSnackBar(const SnackBar(content: Text('Sukses Edit Data')));
+        Navigator.pop(context);
       }
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error')));
+          .showSnackBar(const SnackBar(content: Text('Error')));
       throw Exception('Failed to read API');
     }
   }
@@ -81,20 +76,21 @@ class EditOfferState extends State<EditOffer> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit Offer"),
+          title: const Text("Edit Offer"),
         ),
         body: Form(
           key: _formKey,
           child: Column(
             children: <Widget>[
               Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: TextFormField(
+                    controller: _titleCont,
                     decoration: const InputDecoration(
                       labelText: 'Name',
                     ),
                     onChanged: (value) {
-                      ad.names = value;
+                      widget.adopt!.names = value;
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -104,13 +100,14 @@ class EditOfferState extends State<EditOffer> {
                     },
                   )),
               Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: TextFormField(
+                    controller: _typeCont,
                     decoration: const InputDecoration(
                       labelText: 'Type',
                     ),
                     onChanged: (value) {
-                      ad.images = value;
+                      widget.adopt!.images = value;
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -120,13 +117,14 @@ class EditOfferState extends State<EditOffer> {
                     },
                   )),
               Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: TextFormField(
+                    controller: _descCont,
                     decoration: const InputDecoration(
                       labelText: 'Deskripsi',
                     ),
                     onChanged: (value) {
-                      ad.descriptions = value;
+                      widget.adopt!.descriptions = value;
                     },
                     validator: (value) {
                       if (value!.length < 30) {
@@ -139,13 +137,14 @@ class EditOfferState extends State<EditOffer> {
                     maxLines: 6,
                   )),
               Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: TextFormField(
+                    controller: _imageCont,
                     decoration: const InputDecoration(
                       labelText: 'Gambar',
                     ),
                     onChanged: (value) {
-                      ad.images = value;
+                      widget.adopt!.images = value;
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -160,13 +159,13 @@ class EditOfferState extends State<EditOffer> {
                   onPressed: () {
                     if (_formKey.currentState != null &&
                         !_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Harap Isian diperbaiki')));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Harap Isian diperbaiki')));
                     } else {
                       submit();
                     }
                   },
-                  child: Text('Submit'),
+                  child: const Text('Edit'),
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/screen/adopt.dart';
 import 'package:myproject/screen/browse.dart';
+import 'package:myproject/screen/editoffer.dart';
 import 'package:myproject/screen/login.dart';
 import 'package:myproject/screen/newoffer.dart';
 import 'package:myproject/screen/offer.dart';
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         'browse': (context) => Browse(),
         'offer': (context) => const Offer(),
         'new_offer': (context) => const NewOffer(),
+        'edit_offer': (context) => EditOffer(
+              adopt: null,
+            ),
       },
       home: const MyHomePage(title: 'Adopsian'),
     );
